@@ -77,17 +77,17 @@
 
   // Ví dụ lưu dữ liệu
   function saveData() {
-    const refPath = database.ref("logs");
-    refPath.push({
-      time: new Date().toISOString(),
-      product: "Pepsi",
-      quantity: 5
-    }).then(() => {
-      alert("Đã lưu vào Firebase!");
-    }).catch((err) => {
-      alert("Lỗi khi lưu: " + err.message);
-    });
-  }
+  const data = {
+    ten: "Test",
+    soluong: 10,
+    thoigian: new Date().toISOString()
+  };
+
+  const dbRef = ref(db, 'logs/');
+  push(dbRef, data)
+    .then(() => alert("Đã lưu dữ liệu thành công!"))
+    .catch(err => console.error("Lỗi khi lưu:", err));
+}
 </script>
 </body>
 </html>
