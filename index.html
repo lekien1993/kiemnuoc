@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -53,41 +52,53 @@
   <div id="status"></div>
 
   <!-- Firebase SDK -->
-  <!-- Firebase App (the core Firebase SDK) -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
 
-<!-- Firebase Realtime Database -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
+  <script>
+    // Cấu hình Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyC4pUOS37SM01K2bqUWX-RB2qkDrD38Oww",
+      authDomain: "khonuoc-8044c.firebaseapp.com",
+      databaseURL: "https://khonuoc-8044c-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "khonuoc-8044c",
+      storageBucket: "khonuoc-8044c.appspot.com",
+      messagingSenderId: "585367282568",
+      appId: "1:585367282568:web:f38a5816fdc70a59e2103d"
+    };
 
-<script>
-  // Cấu hình Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyC4pUOS37SM01K2bqUWX-RB2qkDrD38Oww",
-    authDomain: "khonuoc-8044c.firebaseapp.com",
-    databaseURL: "https://khonuoc-8044c-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "khonuoc-8044c",
-    storageBucket: "khonuoc-8044c.appspot.com",
-    messagingSenderId: "585367282568",
-    appId: "1:585367282568:web:f38a5816fdc70a59e2103d"
-  };
+    // Khởi tạo Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-  // Khởi tạo Firebase
-  firebase.initializeApp(firebaseConfig);
-  const database = firebase.database();
+    // Hàm lưu dữ liệu
+    function saveInventory() {
+      const ten = document.getElementById("ten").value.trim();
+      const loai = document.getElementById("loai").value;
+      const ton = parseInt(document.getElementById("ton").value);
 
-  // Ví dụ lưu dữ liệu
-  function saveData() {
-  const data = {
-    ten: "Test",
-    soluong: 10,
-    thoigian: new Date().toISOString()
-  };
+      if (!ten || isNaN(ton)) {
+        alert("Vui lòng điền đầy đủ thông tin.");
+        return;
+      }
 
-  const dbRef = ref(db, 'logs/');
-  push(dbRef, data)
-    .then(() => alert("Đã lưu dữ liệu thành công!"))
-    .catch(err => console.error("Lỗi khi lưu:", err));
-}
-</script>
+      const data = {
+        ten,
+        loai,
+        ton,
+        thoigian: new Date().toISOString()
+      };
+
+      db.ref("logs").push(data)
+        .then(() => {
+          alert("✅ Dữ liệu đã được lưu!");
+          document.getElementById("status").innerText = "Đã lưu vào Firebase.";
+        })
+        .catch(error => {
+          console.error("Lỗi khi lưu:", error);
+          document.getElementById("status").innerText = "❌ Lỗi khi lưu dữ liệu.";
+        });
+    }
+  </script>
 </body>
 </html>
