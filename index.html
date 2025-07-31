@@ -51,12 +51,11 @@
 
   <div id="status"></div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
+  <!-- Firebase SDK (CDN phiên bản UMD không phải module) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
   <script>
-    // Cấu hình Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyC4pUOS37SM01K2bqUWX-RB2qkDrD38Oww",
       authDomain: "khonuoc-8044c.firebaseapp.com",
@@ -67,36 +66,34 @@
       appId: "1:585367282568:web:f38a5816fdc70a59e2103d"
     };
 
-    // Khởi tạo Firebase
-    const app = firebase.initializeApp(firebaseConfig);
+    // Khởi tạo
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Hàm lưu dữ liệu
     function saveInventory() {
-      const ten = document.getElementById("ten").value.trim();
+      const ten = document.getElementById("ten").value;
       const loai = document.getElementById("loai").value;
-      const ton = parseInt(document.getElementById("ton").value);
+      const ton = document.getElementById("ton").value;
 
-      if (!ten || isNaN(ton)) {
-        alert("Vui lòng điền đầy đủ thông tin.");
+      if (!ten || !ton) {
+        alert("Vui lòng nhập đầy đủ thông tin!");
         return;
       }
 
       const data = {
         ten,
         loai,
-        ton,
+        ton: Number(ton),
         thoigian: new Date().toISOString()
       };
 
-      db.ref("logs").push(data)
+      db.ref("kiemkho/").push(data)
         .then(() => {
-          alert("✅ Dữ liệu đã được lưu!");
-          document.getElementById("status").innerText = "Đã lưu vào Firebase.";
+          document.getElementById("status").textContent = "✅ Đã lưu dữ liệu thành công!";
         })
-        .catch(error => {
-          console.error("Lỗi khi lưu:", error);
-          document.getElementById("status").innerText = "❌ Lỗi khi lưu dữ liệu.";
+        .catch((err) => {
+          console.error("Lỗi khi lưu:", err);
+          document.getElementById("status").textContent = "❌ Lỗi khi lưu dữ liệu.";
         });
     }
   </script>
