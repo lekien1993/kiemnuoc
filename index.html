@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Kiểm kho nước ngọt</title>
   <style>
     body {
@@ -26,6 +26,9 @@
       color: white;
       font-weight: bold;
       cursor: pointer;
+    }
+    #status {
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -51,11 +54,12 @@
 
   <div id="status"></div>
 
-  <!-- Firebase SDK (CDN phiên bản UMD không phải module) -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
   <script>
+    // ✅ Cấu hình Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyC4pUOS37SM01K2bqUWX-RB2qkDrD38Oww",
       authDomain: "khonuoc-8044c.firebaseapp.com",
@@ -66,34 +70,42 @@
       appId: "1:585367282568:web:f38a5816fdc70a59e2103d"
     };
 
-    // Khởi tạo
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // ✅ Telegram Bot Config
+    const BOT_TOKEN = "8177155010:AAHRAOmlzD04aC1DoK2xekVv3l6NNjwoXRo";
+    const CHAT_ID = "460122343"; // Chat ID của bạn (bạn đã lấy được rồi)
+
     function saveInventory() {
-      const ten = document.getElementById("ten").value;
+      const ten = document.getElementById("ten").value.trim();
       const loai = document.getElementById("loai").value;
-      const ton = document.getElementById("ton").value;
+      const ton = document.getElementById("ton").value.trim();
 
       if (!ten || !ton) {
-        alert("Vui lòng nhập đầy đủ thông tin!");
+        document.getElementById("status").innerText = "⚠️ Vui lòng nhập đầy đủ thông tin.";
         return;
       }
 
       const data = {
         ten,
         loai,
-        ton: Number(ton),
-        thoigian: new Date().toISOString()
+        ton,
+        thoigian: new Date().toLocaleString()
       };
 
-      db.ref("kiemkho/").push(data)
+      db.ref("kho_nuoc").push(data)
         .then(() => {
-          document.getElementById("status").textContent = "✅ Đã lưu dữ liệu thành công!";
+          document.getElementById("status").innerText = "✅ Đã lưu dữ liệu thành công!";
+
+          // Gửi Telegram
+          const text = `📦 NHẬP KHO\n👤 Nhân viên: ${ten}\n🥤 Loại: ${loai}\n📦 Số lượng: ${ton}\n🕒 ${data.thoigian}`;
+          const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}`;
+          fetch(url);
         })
-        .catch((err) => {
+        .catch(err => {
           console.error("Lỗi khi lưu:", err);
-          document.getElementById("status").textContent = "❌ Lỗi khi lưu dữ liệu.";
+          document.getElementById("status").innerText = "❌ Có lỗi xảy ra khi lưu!";
         });
     }
   </script>
